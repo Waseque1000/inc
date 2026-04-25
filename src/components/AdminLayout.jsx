@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Navigate, Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FileText, LogOut, Box, RefreshCw, Users, Menu, X } from 'lucide-react';
+import { LayoutDashboard, FileText, LogOut, Box, RefreshCw, Users, Menu, X, Shield } from 'lucide-react';
 
 import api from '../api/axios';
 
@@ -40,6 +40,7 @@ const AdminLayout = () => {
     { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
     { name: 'Manage Forms', path: '/admin/forms', icon: FileText },
     { name: 'Member List', path: '/admin/enrollment', icon: Users },
+    { name: 'Admins', path: '/admin/admins', icon: Shield },
   ];
 
   return (

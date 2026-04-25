@@ -14,12 +14,26 @@ const AdminForms = () => {
     formSlug: '',
     startDate: '',
     endDate: '',
+    createdBy: '',
     customFields: []
   });
 
+  const [currentAdmin, setCurrentAdmin] = useState(null);
+
   useEffect(() => {
     fetchForms();
+    fetchAdminProfile();
   }, []);
+
+  const fetchAdminProfile = async () => {
+    try {
+      const res = await api.get('/admin/me');
+      setCurrentAdmin(res.data);
+      setFormData(prev => ({ ...prev, createdBy: res.data.name }));
+    } catch (err) {
+      console.error('Failed to fetch admin profile');
+    }
+  };
 
   const fetchForms = async () => {
     try {
@@ -42,7 +56,14 @@ const AdminForms = () => {
       await api.post('/forms/create', formData);
       toast.success('Form created successfully');
       setIsModalOpen(false);
-      setFormData({ formName: '', formSlug: '', startDate: '', endDate: '', customFields: [] });
+      setFormData({ 
+        formName: '', 
+        formSlug: '', 
+        startDate: '', 
+        endDate: '', 
+        createdBy: currentAdmin?.name || '',
+        customFields: [] 
+      });
       fetchForms();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to create form');
@@ -56,6 +77,7 @@ const AdminForms = () => {
       formSlug: form.formSlug,
       startDate: form.startDate ? form.startDate.split('T')[0] : '',
       endDate: form.endDate ? form.endDate.split('T')[0] : '',
+      createdBy: form.createdBy || '',
       customFields: form.customFields || []
     });
     setIsEditModalOpen(true);
@@ -162,6 +184,16 @@ const AdminForms = () => {
                 onChange={e => setFormData({...formData, formSlug: e.target.value.toLowerCase().replace(/\s+/g, '-')})}
               />
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Admin Name (Created By)</label>
+            <input
+              type="text" required placeholder="Your Name"
+              className="w-full px-3 py-2 bg-white border border-gray-300 text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-gray-900 outline-none transition-all sm:text-sm"
+              value={formData.createdBy}
+              onChange={e => setFormData({...formData, createdBy: e.target.value})}
+            />
           </div>
           
           <div className="grid grid-cols-2 gap-4 pt-1">
@@ -272,7 +304,14 @@ const AdminForms = () => {
         </div>
         <button
           onClick={() => {
-            setFormData({ formName: '', formSlug: '', startDate: '', endDate: '', customFields: [] });
+            setFormData({ 
+              formName: '', 
+              formSlug: '', 
+              startDate: '', 
+              endDate: '', 
+              createdBy: currentAdmin?.name || '',
+              customFields: [] 
+            });
             setIsModalOpen(true);
           }}
           className="mt-4 sm:mt-0 flex items-center bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm"
@@ -307,7 +346,12 @@ const AdminForms = () => {
                       </div>
                       <div>
                         <p className="font-bold text-gray-900 text-sm">{form.formName}</p>
-                        <p className="text-[10px] text-gray-400 mt-0.5 font-mono">ID: {form._id.slice(-8)}</p>
+                        <div className="flex flex-col mt-0.5">
+                          <p className="text-[10px] text-gray-400 font-mono">ID: {form._id.slice(-8)}</p>
+                          <p className="text-[9px] text-indigo-500 font-bold mt-0.5">
+                            Created by {form.createdBy || 'Administrator'} on {new Date(form.createdAt).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' })}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -379,6 +423,9 @@ const AdminForms = () => {
                   </div>
                   <div>
                     <p className="font-bold text-gray-900 text-base leading-tight">{form.formName}</p>
+                    <p className="text-[9px] text-indigo-500 font-bold mt-0.5">
+                      By {form.createdBy || 'Administrator'} • {new Date(form.createdAt).toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' })}
+                    </p>
                     <button 
                       onClick={() => toggleStatus(form)}
                       className={`mt-1.5 inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${

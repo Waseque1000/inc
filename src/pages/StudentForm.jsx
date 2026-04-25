@@ -151,13 +151,13 @@ const StudentForm = () => {
         <div className="w-full md:w-[55%] p-6 md:p-10">
           <div className="mb-10">
             <div className="inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
-              Daily Progress Update
+              {formConfig.formName}
             </div>
             <h1 className="text-4xl md:text-5xl font-black text-indigo-900 mb-2 tracking-tight leading-none">
               Let's track <span className="text-indigo-400">.</span>
             </h1>
             <p className="text-gray-400 text-sm max-w-xs leading-relaxed font-medium">
-              Update your daily progress update and let us know your goals.
+              Update your daily progress update and let us know your goals for <span className="text-indigo-600 font-bold">{formConfig.formName}</span>.
             </p>
           </div>
 
