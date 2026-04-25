@@ -69,7 +69,43 @@ const StudentForm = () => {
     </div>
   );
 
-  if (error) return <div className="min-h-screen flex items-center justify-center bg-gray-50 text-red-600 text-xl font-medium">{error}</div>;
+  if (error) return (
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0a0b] text-white p-8 relative overflow-hidden font-sans">
+      {/* Cinematic Background */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-600/20 rounded-full blur-[120px] animate-pulse"></div>
+      <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] bg-purple-600/10 rounded-full blur-[100px] animate-bounce-subtle"></div>
+      
+      {/* Content */}
+      <div className="relative z-10 flex flex-col items-center max-w-2xl text-center">
+        <div className="mb-12 relative">
+          <div className="absolute inset-0 bg-indigo-500/20 blur-3xl rounded-full animate-pulse"></div>
+          <div className="w-32 h-32 bg-white/5 backdrop-blur-2xl rounded-full flex items-center justify-center border border-white/10 shadow-2xl relative z-10 group hover:scale-110 transition-transform duration-500">
+            <Globe className="w-12 h-12 text-indigo-400 group-hover:rotate-12 transition-transform duration-700" />
+          </div>
+        </div>
+
+        <h1 className="text-6xl md:text-8xl font-black mb-6 tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40 animate-in fade-in slide-in-from-bottom-10 duration-1000">
+          CLOSED<span className="text-indigo-500">.</span>
+        </h1>
+        
+        <div className="space-y-4 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-300">
+          <p className="text-xl md:text-2xl font-bold text-gray-400">
+            {error === 'Form not found' ? 'Page Not Found' : 'Submission Cycle Ended'}
+          </p>
+          <p className="text-gray-500 text-sm md:text-base leading-relaxed max-w-md mx-auto font-medium">
+            {error === 'Form not found' 
+              ? "The link you followed might be broken or the form has been removed from our servers." 
+              : "This journey has reached its destination. This form is no longer accepting new submissions."}
+          </p>
+        </div>
+
+        <div className="mt-16 flex flex-col items-center animate-in fade-in duration-1000 delay-500">
+          <div className="w-px h-20 bg-gradient-to-b from-indigo-500 to-transparent"></div>
+          <p className="mt-4 text-[10px] font-black uppercase tracking-[0.3em] text-indigo-400/50">Incubator System</p>
+        </div>
+      </div>
+    </div>
+  );
 
   if (submitted) return (
     <div className="min-h-screen flex items-center justify-center bg-indigo-50 p-6 relative overflow-hidden">
@@ -93,17 +129,31 @@ const StudentForm = () => {
   );
 
   return (
-    <div className="min-h-screen bg-white md:bg-indigo-50 flex items-center justify-center p-0 md:p-6 relative overflow-hidden font-sans w-full max-w-[100vw]">
+    <div className="min-h-screen bg-white md:bg-indigo-50 flex flex-col md:items-center md:justify-center p-0 md:p-6 relative overflow-hidden font-sans w-full max-w-[100vw]">
       {/* Abstract Background Elements (Desktop Only) */}
       <div className="hidden md:block absolute top-[-5%] left-[-5%] w-[30%] h-[40%] bg-indigo-200/40 rounded-full blur-3xl"></div>
       <div className="hidden md:block absolute bottom-[-10%] right-[-5%] w-[40%] h-[50%] bg-purple-200/40 rounded-full blur-3xl"></div>
+
+      {/* Mobile Brand Header */}
+      <div className="md:hidden w-full p-6 bg-indigo-900 text-white flex items-center justify-between shadow-xl">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-md border border-white/20">
+            <Globe className="w-5 h-5 text-indigo-100" />
+          </div>
+          <span className="font-black tracking-tighter text-lg uppercase">Incubator</span>
+        </div>
+        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+      </div>
 
       <div className="bg-white rounded-none md:rounded-[40px] shadow-none md:shadow-2xl max-w-4xl w-full flex flex-col md:flex-row overflow-hidden relative z-10 border border-transparent md:border-white/50">
         
         {/* Left Side: Form */}
         <div className="w-full md:w-[55%] p-6 md:p-10">
-          <div className="mb-8">
-            <h1 className="text-3xl font-extrabold text-indigo-900 mb-2 tracking-tight leading-tight">
+          <div className="mb-10">
+            <div className="inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
+              Daily Progress Update
+            </div>
+            <h1 className="text-4xl md:text-5xl font-black text-indigo-900 mb-2 tracking-tight leading-none">
               Let's track <span className="text-indigo-400">.</span>
             </h1>
             <p className="text-gray-400 text-sm max-w-xs leading-relaxed font-medium">

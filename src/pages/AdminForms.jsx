@@ -282,109 +282,154 @@ const AdminForms = () => {
         </button>
       </div>
 
-      {/* Modern Table Card */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Campaign</th>
-                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Public URL</th>
-                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Duration</th>
-                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Actions</th>
+      {/* Forms List Section */}
+      <div className="bg-white rounded-[2.5rem] border border-gray-100 overflow-hidden shadow-2xl shadow-gray-200/50">
+        
+        {/* Desktop Table View */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-left whitespace-nowrap">
+            <thead className="bg-gray-50/50 border-b border-gray-100">
+              <tr>
+                <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Form Identity</th>
+                <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Share Link</th>
+                <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Duration</th>
+                <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest">Status</th>
+                <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {forms.map((form, index) => (
+              {forms.map(form => (
                 <tr key={form._id} className="hover:bg-gray-50 transition-colors group">
-                  <td className="px-6 py-4">
+                  <td className="px-8 py-5">
                     <div className="flex items-center">
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center mr-4 ${form.isClosed ? 'bg-gray-100 text-gray-400' : 'bg-blue-50 text-blue-600 border border-blue-100'}`}>
-                        <Box className="w-4 h-4" />
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-4 shadow-sm ${form.isClosed ? 'bg-gray-100 text-gray-400' : 'bg-indigo-50 text-indigo-600 border border-indigo-100'}`}>
+                        <Box className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="font-semibold text-gray-900 text-sm">{form.formName}</p>
-                        <p className="text-xs text-gray-500 mt-0.5 font-mono">ID: {form._id.slice(-6)}</p>
+                        <p className="font-bold text-gray-900 text-sm">{form.formName}</p>
+                        <p className="text-[10px] text-gray-400 mt-0.5 font-mono">ID: {form._id.slice(-8)}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center space-x-2 bg-gray-50 px-2.5 py-1.5 rounded-lg border border-gray-200 w-max">
+                  <td className="px-8 py-5">
+                    <div className="flex items-center space-x-2 bg-gray-50 px-3 py-2 rounded-xl border border-gray-200 w-max group/link">
                       <LinkIcon className="w-3.5 h-3.5 text-gray-400" />
-                      <a href={`/form/${form.formSlug}`} target="_blank" rel="noopener noreferrer" className="text-sm text-gray-600 hover:text-gray-900 font-medium truncate max-w-[150px] transition-colors">
-                        /form/{form.formSlug}
+                      <a href={`/form/${form.formSlug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-gray-600 hover:text-indigo-600 font-bold truncate max-w-[150px] transition-colors">
+                        /{form.formSlug}
                       </a>
                       <button 
                         onClick={() => copyToClipboard(form.formSlug)}
-                        className="text-gray-400 hover:text-gray-900 transition-colors p-1 rounded hover:bg-gray-200"
+                        className="text-gray-400 hover:text-indigo-600 transition-colors p-1 rounded-lg hover:bg-white"
                         title="Copy Share Link"
                       >
                         <Copy className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Calendar className="w-4 h-4 mr-2 text-gray-400" />
+                  <td className="px-8 py-5">
+                    <div className="flex items-center text-xs font-bold text-gray-600 bg-gray-50 w-max px-3 py-1.5 rounded-full border border-gray-100">
+                      <Calendar className="w-3.5 h-3.5 mr-2 text-indigo-400" />
                       {new Date(form.startDate).toLocaleDateString(undefined, {month:'short', day:'numeric'})} - {new Date(form.endDate).toLocaleDateString(undefined, {month:'short', day:'numeric'})}
                     </div>
                   </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                      form.isClosed 
-                      ? 'bg-gray-100 text-gray-600 border-transparent' 
-                      : 'bg-green-50 text-green-700 border-green-200'
-                    }`}>
+                  <td className="px-8 py-5">
+                    <button 
+                      onClick={() => toggleStatus(form)}
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all ${
+                        form.isClosed 
+                        ? 'bg-gray-100 text-gray-500 border-gray-200' 
+                        : 'bg-emerald-50 text-emerald-700 border-emerald-200 shadow-sm shadow-emerald-50'
+                      }`}
+                    >
                       {form.isClosed ? 'Closed' : 'Active'}
-                    </span>
+                    </button>
                   </td>
-                  <td className="px-6 py-4 text-right">
+                  <td className="px-8 py-5 text-right">
                     <div className="flex items-center justify-end space-x-2">
                       <button
                         onClick={() => openEditModal(form)}
-                        className="p-1.5 text-gray-400 hover:text-gray-900 hover:bg-gray-200 rounded transition-colors"
+                        className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
                         title="Edit Form"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleDeleteForm(form._id)}
-                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                        className="p-2 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all"
                         title="Delete Form"
                       >
                         <Trash2 className="w-4 h-4" />
-                      </button>
-                      <button
-                        onClick={() => toggleStatus(form)}
-                        className={`text-sm font-medium px-3 py-1.5 rounded-lg transition-all ${
-                          form.isClosed 
-                          ? 'text-green-600 hover:bg-green-50' 
-                          : 'text-gray-600 hover:bg-gray-100'
-                        }`}
-                      >
-                        {form.isClosed ? 'Reopen' : 'Close'}
                       </button>
                     </div>
                   </td>
                 </tr>
               ))}
-              {forms.length === 0 && (
-                <tr>
-                  <td colSpan="5" className="px-6 py-12 text-center">
-                    <div className="flex flex-col items-center justify-center">
-                      <div className="bg-gray-50 p-3 rounded-full mb-3 border border-gray-100">
-                        <Box className="w-6 h-6 text-gray-400" />
-                      </div>
-                      <p className="text-gray-900 font-medium mb-1">No forms found</p>
-                      <p className="text-gray-500 text-sm">Click the create button above to get started.</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
+
+        {/* Mobile Card View */}
+        <div className="md:hidden divide-y divide-gray-100">
+          {forms.map(form => (
+            <div key={form._id} className="p-6 space-y-4 hover:bg-gray-50 transition-colors">
+              <div className="flex justify-between items-start">
+                <div className="flex items-center">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center mr-4 shadow-sm ${form.isClosed ? 'bg-gray-100 text-gray-400' : 'bg-indigo-50 text-indigo-600 border border-indigo-100'}`}>
+                    <Box className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-gray-900 text-base leading-tight">{form.formName}</p>
+                    <button 
+                      onClick={() => toggleStatus(form)}
+                      className={`mt-1.5 inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                        form.isClosed ? 'bg-gray-100 text-gray-500 border-gray-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      }`}
+                    >
+                      {form.isClosed ? 'Closed' : 'Active'}
+                    </button>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <button onClick={() => openEditModal(form)} className="p-2 text-gray-400 hover:text-indigo-600 rounded-lg">
+                    <Edit2 className="w-5 h-5" />
+                  </button>
+                  <button onClick={() => handleDeleteForm(form._id)} className="p-2 text-gray-400 hover:text-rose-600 rounded-lg">
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3">
+                <div className="flex items-center justify-between bg-gray-50 p-4 rounded-[1.5rem] border border-gray-100 shadow-sm">
+                  <div className="flex items-center text-xs font-bold text-gray-600">
+                    <LinkIcon className="w-3.5 h-3.5 mr-2 text-indigo-400" />
+                    /{form.formSlug}
+                  </div>
+                  <button 
+                    onClick={() => copyToClipboard(form.formSlug)}
+                    className="p-2 bg-white rounded-xl border border-gray-200 text-indigo-600 shadow-sm shadow-indigo-50 transition-all active:scale-90"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </button>
+                </div>
+                <div className="flex items-center text-xs font-bold text-gray-600 bg-gray-50 p-4 rounded-[1.5rem] border border-gray-100">
+                  <Calendar className="w-3.5 h-3.5 mr-2 text-indigo-400" />
+                  {new Date(form.startDate).toLocaleDateString()} - {new Date(form.endDate).toLocaleDateString()}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {forms.length === 0 && (
+          <div className="px-8 py-24 text-center">
+            <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 border border-gray-100">
+              <FileText className="w-10 h-10 text-gray-300" />
+            </div>
+            <p className="text-gray-900 font-black text-xl">No campaigns found</p>
+            <p className="text-gray-400 text-sm mt-1 max-w-[200px] mx-auto">Create your first form to start tracking progress.</p>
+          </div>
+        )}
       </div>
 
       {isModalOpen && renderFormModal(false)}

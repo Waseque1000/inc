@@ -123,72 +123,100 @@ const AdminRewards = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
           {rewards.map(student => (
-            <div key={student._id} className="bg-white rounded-[2rem] shadow-xl shadow-gray-200/40 border border-gray-100 overflow-hidden flex flex-col group hover:-translate-y-1 transition-all duration-300">
-              <div className={`h-2 ${student.isEligible ? 'bg-amber-400' : 'bg-rose-400'}`}></div>
-              <div className="p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-black text-gray-900 tracking-tight">{student.name}</h3>
+            <div 
+              key={student._id} 
+              className={`relative rounded-[2.5rem] shadow-2xl shadow-gray-200/30 border-2 transition-all duration-500 flex flex-col group hover:-translate-y-2 ${
+                student.isEligible 
+                ? 'bg-white border-emerald-500/20 ring-4 ring-emerald-50' 
+                : 'bg-white border-gray-100 hover:border-indigo-100'
+              }`}
+            >
+              {/* King Badge for Eligible Students */}
+              {student.isEligible && (
+                <div className="absolute -top-3 -right-3 w-16 h-16 bg-white rounded-full shadow-2xl border-4 border-emerald-50 flex items-center justify-center z-10 animate-bounce-subtle ring-8 ring-white/50">
+                  <span className="text-3xl filter drop-shadow-sm">👑</span>
+                </div>
+              )}
+
+              <div className={`h-2.5 ${student.isEligible ? 'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.5)]' : 'bg-rose-400'}`}></div>
+              
+              <div className="p-10 flex flex-col h-full">
+                <div className="flex items-center justify-between mb-8">
+                  <div className="space-y-1">
+                    <h3 className="text-2xl font-black text-gray-900 tracking-tight leading-none">{student.name}</h3>
+                    {student.isEligible && <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Master of Tasks</p>}
+                  </div>
                   <button 
                     onClick={() => toggleDetails(student._id)}
-                    className={`p-2.5 rounded-2xl transition-all ${expandedStudentId === student._id ? 'bg-[#1e293b] text-cyan-400 shadow-lg shadow-slate-200' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'}`}
-                    title="View Contact Details"
+                    className={`p-3 rounded-2xl transition-all ${expandedStudentId === student._id ? 'bg-[#1e293b] text-cyan-400 shadow-xl shadow-slate-200' : 'text-gray-300 hover:text-gray-600 hover:bg-gray-100'}`}
                   >
                     {expandedStudentId === student._id ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
 
                 {expandedStudentId === student._id && (
-                  <div className="mb-6 bg-[#1e293b] rounded-2xl p-5 shadow-2xl border border-gray-700 animate-in fade-in zoom-in-95 duration-200">
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Email</span>
-                      <div className="flex items-center space-x-3">
-                        <span className="text-gray-100 text-sm font-medium truncate max-w-[150px]">{student.email}</span>
-                        <button onClick={() => copyToClipboard(student.email, 'Email')} className="text-cyan-400 hover:text-cyan-300 transition-colors">
-                          <Copy className="w-4 h-4" />
-                        </button>
+                  <div className="mb-8 bg-[#1e293b] rounded-3xl p-6 shadow-inner border border-slate-700 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Email</span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-slate-200 text-sm font-medium">{student.email}</span>
+                          <button onClick={() => copyToClipboard(student.email, 'Email')} className="text-cyan-400 hover:scale-110 transition-transform">
+                            <Copy className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-400 text-[10px] font-black uppercase tracking-widest">Phone</span>
-                      <div className="flex items-center space-x-3">
-                        <span className="text-gray-100 text-sm font-medium">{student.phone}</span>
-                        <button onClick={() => copyToClipboard(student.phone, 'Phone')} className="text-cyan-400 hover:text-cyan-300 transition-colors">
-                          <Copy className="w-4 h-4" />
-                        </button>
+                      <div className="flex justify-between items-center">
+                        <span className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Phone</span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-slate-200 text-sm font-medium">{student.phone}</span>
+                          <button onClick={() => copyToClipboard(student.phone, 'Phone')} className="text-cyan-400 hover:scale-110 transition-transform">
+                            <Copy className="w-4 h-4" />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
                 )}
                 
-                <div className="space-y-4 mb-8">
-                  <div className="flex justify-between items-center text-sm font-medium">
-                    <span className="text-gray-400">Total Submissions</span>
-                    <span className="text-gray-900 bg-gray-100 px-3 py-1 rounded-full">{student.submissionCount}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-sm font-medium">
-                    <span className="text-gray-400">Target Goal</span>
-                    <span className="text-gray-900 bg-gray-100 px-3 py-1 rounded-full">{student.requiredDays} Days</span>
+                <div className="space-y-5 mb-10 flex-grow">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="text-gray-400 font-bold">Performance</span>
+                    <span className={`px-4 py-1.5 rounded-xl font-black text-xs ${student.isEligible ? 'bg-emerald-50 text-emerald-600' : 'bg-gray-50 text-gray-400'}`}>
+                      {student.submissionCount} / {student.requiredDays} Submissions
+                    </span>
                   </div>
                   
-                  {/* Progress Bar */}
-                  <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full transition-all duration-1000 ${student.isEligible ? 'bg-amber-400' : 'bg-rose-400'}`}
-                      style={{ width: `${Math.min((student.submissionCount / student.requiredDays) * 100, 100)}%` }}
-                    ></div>
+                  {/* High-End Progress Bar */}
+                  <div className="relative pt-2">
+                    <div className="w-full bg-gray-100 h-3 rounded-full overflow-hidden border border-gray-50 shadow-inner">
+                      <div 
+                        className={`h-full transition-all duration-1000 relative ${
+                          student.isEligible 
+                          ? 'bg-gradient-to-r from-emerald-400 to-emerald-600' 
+                          : 'bg-gradient-to-r from-rose-300 to-rose-500'
+                        }`}
+                        style={{ width: `${Math.min((student.submissionCount / student.requiredDays) * 100, 100)}%` }}
+                      >
+                        {student.isEligible && <div className="absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.3)_50%,transparent_100%)] animate-[shimmer_2s_infinite]"></div>}
+                      </div>
+                    </div>
                   </div>
                 </div>
                 
                 <div className="mt-auto">
                   {student.isEligible ? (
-                    <div className="flex items-center justify-center w-full bg-amber-50 text-amber-700 py-4 rounded-2xl font-black text-sm uppercase tracking-widest border border-amber-100 shadow-sm">
-                      <CheckCircle className="w-5 h-5 mr-2" />
-                      Eligible for Reward
+                    <div className="relative group/btn">
+                      <div className="absolute -inset-1 bg-emerald-400 rounded-2xl blur opacity-25 group-hover/btn:opacity-50 transition duration-1000 group-hover/btn:duration-200"></div>
+                      <div className="relative flex items-center justify-center w-full bg-emerald-600 text-white py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-emerald-100 active:scale-[0.98] transition-all">
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        Eligible for Reward
+                      </div>
                     </div>
                   ) : (
-                    <div className="flex items-center justify-center w-full bg-rose-50 text-rose-700 py-4 rounded-2xl font-black text-sm uppercase tracking-widest border border-rose-100 opacity-60">
-                      <XCircle className="w-5 h-5 mr-2" />
-                      Incomplete Journey
+                    <div className="flex items-center justify-center w-full bg-rose-50 text-rose-700/40 py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] border border-rose-100/50">
+                      <XCircle className="w-4 h-4 mr-2" />
+                      Keep Going
                     </div>
                   )}
                 </div>

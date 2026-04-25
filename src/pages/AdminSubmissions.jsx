@@ -4,20 +4,25 @@ import api from '../api/axios';
 import toast from 'react-hot-toast';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { ArrowLeft, Download, Edit2, Check, X, Eye, EyeOff, Copy, BarChart3, Users, Clock, AlertCircle, Link as LinkIcon } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { ArrowLeft, Download, Edit2, Check, X, Eye, EyeOff, Copy, BarChart3, Users, Clock, AlertCircle, Link as LinkIcon, FileCheck, Upload, Trash2, CheckCircle } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
+import Papa from 'papaparse';
+import * as XLSX from 'xlsx';
 
+
+// Submission Management Component
 const AdminSubmissions = () => {
   const { formId } = useParams();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [view, setView] = useState('table'); // 'table', 'analytics', 'enrollment'
   
+  const [enrollmentResults, setEnrollmentResults] = useState(null);
+  const [isCheckingEnrollment, setIsCheckingEnrollment] = useState(false);
   // Inline edit state
   const [editContext, setEditContext] = useState({ id: null, field: null, customKey: null });
   const [editValue, setEditValue] = useState('');
 
-  const [searchParams] = useSearchParams();
-  const [showAnalytics, setShowAnalytics] = useState(searchParams.get('view') === 'analytics');
   const [expandedStudentId, setExpandedStudentId] = useState(null);
   const [formSlug, setFormSlug] = useState('');
   const [stats, setStats] = useState({
@@ -26,6 +31,56 @@ const AdminSubmissions = () => {
     highestModule: 0,
     moduleDistribution: []
   });
+
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setIsCheckingEnrollment(true);
+    const reader = new FileReader();
+
+    const processEmails = async (data) => {
+      try {
+        const emails = data.map(row => {
+          const emailKey = Object.keys(row).find(k => k.toLowerCase().includes('email'));
+          return row[emailKey];
+        }).filter(email => email && email.includes('@'));
+
+        if (emails.length === 0) {
+          toast.error('No emails found in file. Ensure there is an "email" column.');
+          setIsCheckingEnrollment(false);
+          return;
+        }
+
+        const res = await api.post(`/submissions/check-emails/${formId}`, { emails });
+        setEnrollmentResults(res.data);
+        setView('enrollment');
+        toast.success(`Checked ${res.data.length} students from file`);
+      } catch (err) {
+        toast.error('Failed to verify enrollment');
+      } finally {
+        setIsCheckingEnrollment(false);
+      }
+    };
+
+    if (file.name.endsWith('.csv')) {
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: (results) => processEmails(results.data)
+      });
+    } else {
+      reader.onload = (evt) => {
+        const bstr = evt.target.result;
+        const wb = XLSX.read(bstr, { type: 'binary' });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+        processEmails(data);
+      };
+      reader.readAsBinaryString(file);
+    }
+  };
 
   const toggleDetails = (studentId) => {
     setExpandedStudentId(expandedStudentId === studentId ? null : studentId);
@@ -50,6 +105,22 @@ const AdminSubmissions = () => {
       setData(subRes.data);
       setStats(statsRes.data);
       setFormSlug(formRes.data.formSlug);
+
+      // If form has saved enrollment emails, auto-calculate results
+      if (formRes.data.enrolledEmails && formRes.data.enrolledEmails.length > 0) {
+        const submittedEmails = new Set();
+        subRes.data.forEach(student => {
+          if (student.submissions && student.submissions.length > 0) {
+            submittedEmails.add(student.email.toLowerCase());
+          }
+        });
+
+        const results = formRes.data.enrolledEmails.map(email => ({
+          email,
+          hasSubmitted: submittedEmails.has(email.toLowerCase())
+        }));
+        setEnrollmentResults(results);
+      }
     } catch (err) {
       toast.error('Failed to fetch submissions');
     } finally {
@@ -193,6 +264,28 @@ const AdminSubmissions = () => {
           <h1 className="text-2xl font-bold text-gray-900">Form Insights</h1>
         </div>
         <div className="flex flex-wrap items-center gap-3">
+          {/* Navigation Tabs */}
+          <div className="flex bg-gray-100 p-1 rounded-lg mr-2">
+            <button 
+              onClick={() => setView('table')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${view === 'table' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              Table
+            </button>
+            <button 
+              onClick={() => setView('analytics')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${view === 'analytics' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              Analytics
+            </button>
+            <button 
+              onClick={() => setView('enrollment')}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${view === 'enrollment' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+            >
+              Master List Check
+            </button>
+          </div>
+
           <button
             onClick={() => {
               const url = `${window.location.origin}/form/${formSlug}`;
@@ -202,18 +295,7 @@ const AdminSubmissions = () => {
             className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-all shadow-md shadow-indigo-100"
           >
             <LinkIcon className="w-4 h-4 mr-2" />
-            Copy Form Link
-          </button>
-          <button
-            onClick={() => setShowAnalytics(!showAnalytics)}
-            className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-sm border ${
-              showAnalytics 
-              ? 'bg-indigo-50 border-indigo-200 text-indigo-700 hover:bg-indigo-100' 
-              : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
-            }`}
-          >
-            <BarChart3 className="w-4 h-4 mr-2" />
-            {showAnalytics ? 'Hide Analytics' : 'Show Analytics'}
+            Share Form
           </button>
           <button
             onClick={handleExportPDF}
@@ -225,8 +307,8 @@ const AdminSubmissions = () => {
         </div>
       </div>
 
-      {/* Stats & Chart Sections (Toggled) */}
-      {showAnalytics && (
+      {/* Analytics Sections */}
+      {view === 'analytics' && (
         <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -320,8 +402,97 @@ const AdminSubmissions = () => {
         </div>
       )}
 
-      {/* Main Content Card */}
-      <div className="bg-white rounded-[2.5rem] border border-gray-100 overflow-hidden shadow-2xl shadow-gray-200/50">
+      {/* Enrollment Check View */}
+      {view === 'enrollment' && (
+        <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-300">
+          {!enrollmentResults ? (
+            <div className="bg-white p-12 rounded-xl border border-dashed border-gray-300 flex flex-col items-center justify-center text-center">
+              <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                <Upload className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900">No Enrollment Data</h3>
+              <p className="text-gray-500 max-w-sm mt-2">Upload a student CSV file using the button above to check who hasn't filled the form yet.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Pie Chart Summary */}
+              <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <h3 className="text-sm font-bold text-gray-900 mb-6 uppercase tracking-wider">Participation Summary</h3>
+                <div className="h-48 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={[
+                          { name: 'Completed', value: enrollmentResults.filter(r => r.hasSubmitted).length },
+                          { name: 'Missing', value: enrollmentResults.filter(r => !r.hasSubmitted).length }
+                        ]}
+                        innerRadius={60}
+                        outerRadius={80}
+                        paddingAngle={5}
+                        dataKey="value"
+                      >
+                        <Cell fill="#10b981" />
+                        <Cell fill="#f43f5e" />
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="mt-4 space-y-2">
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="flex items-center text-gray-600"><div className="w-2 h-2 rounded-full bg-emerald-500 mr-2"></div> Completed</span>
+                    <span className="font-bold">{enrollmentResults.filter(r => r.hasSubmitted).length}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-sm">
+                    <span className="flex items-center text-gray-600"><div className="w-2 h-2 rounded-full bg-rose-500 mr-2"></div> Missing</span>
+                    <span className="font-bold text-rose-600">{enrollmentResults.filter(r => !r.hasSubmitted).length}</span>
+                  </div>
+                </div>
+                <button 
+                  onClick={() => {
+                    const missing = enrollmentResults.filter(r => !r.hasSubmitted).map(r => r.email).join(', ');
+                    copyToClipboard(missing, 'Missing emails');
+                  }}
+                  className="w-full mt-6 flex items-center justify-center px-4 py-2 bg-rose-50 text-rose-600 rounded-lg text-xs font-bold hover:bg-rose-100 transition-colors"
+                >
+                  <Copy className="w-3 h-3 mr-2" /> Copy All Missing Emails
+                </button>
+              </div>
+
+              {/* Missing List */}
+              <div className="lg:col-span-2 bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div className="p-4 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+                  <h3 className="text-sm font-bold text-gray-900">Missing Students ({enrollmentResults.filter(r => !r.hasSubmitted).length})</h3>
+                </div>
+                <div className="max-h-[400px] overflow-y-auto">
+                  <table className="w-full text-left">
+                    <thead className="bg-gray-50 sticky top-0">
+                      <tr>
+                        <th className="px-6 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Email Address</th>
+                        <th className="px-6 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {enrollmentResults.filter(r => !r.hasSubmitted).map((res, i) => (
+                        <tr key={i} className="hover:bg-rose-50/30 transition-colors">
+                          <td className="px-6 py-3 text-sm text-gray-600 font-mono">{res.email}</td>
+                          <td className="px-6 py-3 text-right">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-600">PENDING</span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Main Table Card (Only show if view is 'table') */}
+      {view === 'table' && (
+        <div className="bg-white rounded-[2.5rem] border border-gray-100 overflow-hidden shadow-2xl shadow-gray-200/50">
         <div className="overflow-x-auto">
           <table className="w-full text-left whitespace-nowrap">
             <thead className="bg-gray-50/50 border-b border-gray-100">
@@ -572,6 +743,7 @@ const AdminSubmissions = () => {
           </table>
         </div>
       </div>
+    )}
     </div>
   );
 };

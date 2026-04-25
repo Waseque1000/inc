@@ -7,6 +7,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminForms from './pages/AdminForms';
 import AdminSubmissions from './pages/AdminSubmissions';
 import AdminRewards from './pages/AdminRewards';
+import AdminEnrollment from './pages/AdminEnrollment';
 import StudentForm from './pages/StudentForm';
 import AdminLayout from './components/AdminLayout';
 
@@ -21,6 +22,7 @@ function App() {
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="forms" element={<AdminForms />} />
+          <Route path="enrollment" element={<AdminEnrollment />} />
           <Route path="submissions/:formId" element={<AdminSubmissions />} />
           <Route path="rewards/:formId" element={<AdminRewards />} />
         </Route>
