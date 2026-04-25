@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
-import { Copy, Plus, X, Calendar, Link as LinkIcon, Box, Edit2, Trash2 } from 'lucide-react';
+import { Copy, Plus, X, Calendar, Link as LinkIcon, Box, Edit2, Trash2, FileText } from 'lucide-react';
 
 const AdminForms = () => {
   const [forms, setForms] = useState([]);
