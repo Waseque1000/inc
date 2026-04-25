@@ -1,0 +1,57 @@
+# Student Daily Task Tracking System — Implementation Plan
+
+## Project Structure
+```
+incubator/
+├── backend/
+│   ├── models/         (Admin, Form, Student, Submission)
+│   ├── routes/         (admin.js, forms.js, submissions.js, export.js)
+│   ├── middleware/     (auth.js)
+│   ├── server.js
+│   └── package.json
+└── frontend/
+    ├── src/
+    │   ├── pages/      (AdminLogin, AdminDashboard, StudentForm)
+    │   ├── components/ (Sidebar, Tables, Charts, etc.)
+    │   ├── context/    (AuthContext)
+    │   └── api/        (axios instance)
+    ├── tailwind.config.js
+    └── package.json
+```
+
+## Database Collections
+- **Admin**: email, password (hashed), createdAt
+- **Forms**: formName, formSlug, startDate, endDate, isClosed, durationDays
+- **Students**: name, email, phone (unique per form)
+- **Submissions**: studentId, formId, date, currentModule, assignedModule, tomorrowTask, needGuideline, guidelineResolved
+
+## API Routes
+### Admin
+- POST /api/admin/login
+- GET  /api/admin/me
+
+### Forms
+- GET    /api/forms
+- POST   /api/forms/create
+- PUT    /api/forms/:id
+- DELETE /api/forms/:id
+
+### Submissions (Student-facing)
+- GET  /api/form/:slug
+- POST /api/form/submit
+
+### Admin Data
+- GET /api/submissions/:formId
+- PUT /api/submissions/:id/resolve-guideline
+- PUT /api/submissions/:id/assign-module
+- GET /api/rewards/:formId
+- GET /api/export/pdf/:formId
+
+## Frontend Pages
+1. /login          — Admin login
+2. /admin          — Dashboard overview
+3. /admin/forms    — Create / edit forms
+4. /admin/submissions/:formId — Daily progress table
+5. /admin/guidelines/:formId  — Guideline requests
+6. /admin/rewards/:formId     — Reward eligibility
+7. /form/:slug     — Public student submission form
