@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
-import { CheckCircle2, MapPin, Phone, Mail, Send, Globe, MessageCircle, Share2 } from 'lucide-react';
+import { CheckCircle2, Mail, Send, Globe, MessageCircle, Share2 } from 'lucide-react';
 import illustration from '/Users/wasequearafat/.gemini/antigravity/brain/f2278b56-c6f0-4f59-8836-0f5adbdf42fb/student_form_illustration_1777009884687.png';
 
 const StudentForm = () => {
@@ -276,24 +276,13 @@ const StudentForm = () => {
               <img src={illustration} alt="Illustration" className="w-full h-auto drop-shadow-xl" />
             </div>
             
-            <div className="space-y-6 w-full">
-              <div className="flex items-center space-x-4 group">
-                <div className="p-3 bg-white rounded-xl shadow-sm text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest">Office</p>
-                  <p className="text-indigo-900 font-bold text-xs">Dhaka, Bangladesh</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4 group">
-                <div className="p-3 bg-white rounded-xl shadow-sm text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
-                  <Phone className="w-5 h-5" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold text-indigo-300 uppercase tracking-widest">Contact</p>
-                  <p className="text-indigo-900 font-bold text-xs">+880 123 456</p>
-                </div>
+            <div className="space-y-6 w-full text-center md:text-left">
+              <div className="p-6 bg-white/50 backdrop-blur-sm rounded-3xl border border-white shadow-inner">
+                <p className="text-lg md:text-xl font-black text-indigo-900 leading-tight italic">
+                  "Move ahead, don’t look behind, <br/>
+                  Learn, grow, and clear your mind. 🚀"
+                </p>
+                <p className="mt-3 text-[10px] font-bold text-indigo-300 uppercase tracking-widest">Daily Motivation</p>
               </div>
             </div>
           </div>

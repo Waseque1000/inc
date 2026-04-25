@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
-import { Box, Users, Gift, ChevronRight, BarChart3, Sparkles } from 'lucide-react';
+import { Box, Users, Gift, ChevronRight, BarChart3 } from 'lucide-react';
 
 const AdminDashboard = () => {
   const [forms, setForms] = useState([]);
@@ -42,14 +42,7 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {forms.map(form => (
           <div key={form._id} className="group bg-white p-6 rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all duration-200 relative overflow-hidden">
-            {form.isUpdatedToday && (
-              <div className="absolute top-0 right-0">
-                <div className="bg-indigo-600 text-white text-[10px] font-bold px-3 py-1 rounded-bl-lg flex items-center shadow-sm">
-                  <Sparkles className="w-3 h-3 mr-1" />
-                  NEW UPDATE
-                </div>
-              </div>
-            )}
+
             <div className="flex justify-between items-start mb-4">
               <div className="p-2.5 rounded-lg bg-gray-50 text-gray-900 border border-gray-100">
                 <Box className="w-5 h-5" />
