@@ -430,7 +430,15 @@ const AdminSubmissions = () => {
                                   </div>
                                 ) : (
                                   <div className="flex items-center justify-between group/edit">
-                                    <div className="font-semibold text-gray-900">{sub.currentModule}</div>
+                                    <div className="flex flex-col">
+                                      <div className="font-semibold text-gray-900">{sub.currentModule}</div>
+                                      {sub.submissionTime && (
+                                        <div className="text-[9px] text-gray-400 font-mono flex items-center">
+                                          <Clock className="w-2 h-2 mr-1" />
+                                          {sub.submissionTime}
+                                        </div>
+                                      )}
+                                    </div>
                                     <button 
                                       onClick={() => startEdit(sub, 'currentModule')}
                                       className="p-0.5 text-rose-400 hover:text-rose-600 transition-opacity"
