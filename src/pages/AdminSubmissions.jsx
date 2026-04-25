@@ -433,8 +433,8 @@ const AdminSubmissions = () => {
                                     <div className="flex flex-col">
                                       <div className="font-semibold text-gray-900">{sub.currentModule}</div>
                                       {sub.submissionTime && (
-                                        <div className="text-[9px] text-gray-400 font-mono flex items-center">
-                                          <Clock className="w-2 h-2 mr-1" />
+                                        <div className="text-[8px] text-gray-400 font-mono flex items-center whitespace-nowrap">
+                                          <Clock className="w-2 h-2 mr-0.5" />
                                           {sub.submissionTime}
                                         </div>
                                       )}
