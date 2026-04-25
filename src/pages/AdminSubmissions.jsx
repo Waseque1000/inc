@@ -31,6 +31,7 @@ const AdminSubmissions = () => {
     highestModule: 0,
     moduleDistribution: []
   });
+  const [formConfig, setFormConfig] = useState(null);
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -104,6 +105,7 @@ const AdminSubmissions = () => {
       ]);
       setData(subRes.data);
       setStats(statsRes.data);
+      setFormConfig(formRes.data);
       setFormSlug(formRes.data.formSlug);
 
       // If form has saved enrollment emails, auto-calculate results
@@ -132,17 +134,13 @@ const AdminSubmissions = () => {
     const doc = new jsPDF();
     doc.text('Student Daily Task Report', 14, 15);
     
-    // Get unique dates for headers
-    const allDates = new Set();
-    data.forEach(student => {
-      student.submissions.forEach(sub => allDates.add(sub.date));
-    });
-    const sortedDates = Array.from(allDates).sort();
+    // Use the same dynamic date range as the table
+    const pdfDates = sortedDates;
 
-    const head = [['Name', ...sortedDates, 'Assigned Next']];
+    const head = [['Name', ...pdfDates, 'Assigned Next']];
     const body = data.map(student => {
       const row = [student.name];
-      sortedDates.forEach(date => {
+      pdfDates.forEach(date => {
         const sub = student.submissions.find(s => s.date === date);
         let cellText = sub ? sub.currentModule : '-';
         if (sub?.customData && Object.keys(sub.customData).length > 0) {
@@ -218,25 +216,44 @@ const AdminSubmissions = () => {
   );
 
   // Extract unique dates for table columns
-  const allDates = new Set();
-  const moduleCounts = {};
-  let totalPendingGuidelines = 0;
-  let highestModule = 0;
+  // Dynamic date range calculation
+  const getSortedDates = () => {
+    if (!formConfig) return [];
+    
+    const dates = [];
+    // Helper to format date as YYYY-MM-DD in local time
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
 
-  data.forEach(student => {
-    student.submissions.forEach(sub => {
-      allDates.add(sub.date);
-      // Track module distribution for chart
-      const mod = parseInt(sub.currentModule?.match(/\d+/)?.[0] || 0);
-      if (mod > 0) {
-        moduleCounts[mod] = (moduleCounts[mod] || 0) + 1;
-        if (mod > highestModule) highestModule = mod;
-      }
-      if (sub.needGuideline && !sub.guidelineResolved) totalPendingGuidelines++;
-    });
-  });
+    let current = new Date(formConfig.startDate);
+    current.setHours(0, 0, 0, 0);
+    
+    // Get "Today" in Bangladesh Time
+    const today = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Dhaka' }));
+    today.setHours(0, 0, 0, 0);
+    
+    const endDate = new Date(formConfig.endDate);
+    endDate.setHours(0, 0, 0, 0);
+    
+    // Use the earlier of today or the form's end date
+    const stopDate = today < endDate ? today : endDate;
+    
+    if (current > stopDate) {
+      return [formatDate(current)];
+    }
 
-  const sortedDates = Array.from(allDates).sort();
+    while (current <= stopDate) {
+      dates.push(formatDate(current));
+      current.setDate(current.getDate() + 1);
+    }
+    return dates;
+  };
+
+  const sortedDates = getSortedDates();
   
   // Format chart data: Use stats from DB or calculate if needed for consistency
   // Note: the user specifically asked for "According to students", so we use the local data for the chart 

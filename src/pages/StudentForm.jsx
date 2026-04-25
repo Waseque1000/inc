@@ -41,11 +41,9 @@ const StudentForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const today = new Date().toISOString().split('T')[0];
       const payload = {
         ...formData,
-        formId: formConfig._id,
-        date: today
+        formId: formConfig._id
       };
       
       await api.post('/submissions/submit', payload);
