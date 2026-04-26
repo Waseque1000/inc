@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { CheckCircle2, Mail, Send, Globe, MessageCircle, Share2 } from 'lucide-react';
-import illustration from '/Users/wasequearafat/.gemini/antigravity/brain/f2278b56-c6f0-4f59-8836-0f5adbdf42fb/student_form_illustration_1777009884687.png';
+import illustration from '../assets/illustration.png';
 
 const StudentForm = () => {
   const { slug } = useParams();
