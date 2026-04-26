@@ -128,34 +128,32 @@ const AdminEnrollment = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Sidebar: Form Selection */}
-        <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white p-6 md:p-8 rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-200/50">
-            <h2 className="text-lg font-bold text-gray-900 mb-6 flex items-center">
-              <FileText className="w-5 h-5 mr-3 text-indigo-400" />
-              Form Campaigns
+        <div className="lg:col-span-1 space-y-4">
+          <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4 flex items-center">
+              <FileText className="w-4 h-4 mr-2" />
+              Forms
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {forms.map(form => (
                 <button
                   key={form._id}
                   onClick={() => setSelectedForm(form)}
-                  className={`w-full flex items-center justify-between p-4 rounded-2xl transition-all duration-300 group border ${
+                  className={`w-full flex items-center justify-between p-3 rounded-lg transition-all border ${
                     selectedForm?._id === form._id 
-                      ? 'bg-indigo-600 border-indigo-600 text-white shadow-xl shadow-indigo-100 -translate-x-1 md:-translate-x-2' 
-                      : 'bg-gray-50 border-transparent text-gray-600 hover:bg-white hover:border-gray-200 hover:shadow-lg'
+                      ? 'bg-gray-900 border-gray-900 text-white' 
+                      : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
                   }`}
                 >
                   <div className="flex items-center text-left">
-                    <Box className={`w-4 h-4 mr-3 ${selectedForm?._id === form._id ? 'text-indigo-200' : 'text-gray-400 group-hover:text-indigo-400'}`} />
-                    <span className="text-sm font-bold truncate max-w-[140px] md:max-w-none">{form.formName}</span>
+                    <Box className={`w-4 h-4 mr-2.5 ${selectedForm?._id === form._id ? 'text-gray-400' : 'text-gray-400'}`} />
+                    <span className="text-sm font-medium truncate">{form.formName}</span>
                   </div>
-                  <ArrowRight className={`w-4 h-4 ${selectedForm?._id === form._id ? 'text-white' : 'text-gray-300 group-hover:text-indigo-400 group-hover:translate-x-1'} transition-all`} />
+                  <ArrowRight className="w-4 h-4 opacity-50" />
                 </button>
               ))}
               {forms.length === 0 && (
-                <div className="p-10 text-center border-2 border-dashed border-gray-100 rounded-3xl">
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">No forms found</p>
-                </div>
+                <p className="text-xs text-gray-400 py-4 text-center">No forms found</p>
               )}
             </div>
           </div>
@@ -164,146 +162,129 @@ const AdminEnrollment = () => {
         {/* Enrollment Management */}
         <div className="lg:col-span-2 space-y-6">
           {!selectedForm ? (
-            <div className="bg-white p-12 md:p-20 rounded-[2rem] border border-gray-200 flex flex-col items-center justify-center text-center">
-              <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-6">
-                <FileText className="w-10 h-10 text-gray-300" />
-              </div>
-              <h3 className="text-xl font-bold text-gray-900">Select a Campaign</h3>
-              <p className="text-gray-500 max-w-xs mt-2 text-sm">Please select a form from the list to manage its master student list and verification status.</p>
+            <div className="bg-white p-12 rounded-xl border border-gray-200 border-dashed flex flex-col items-center justify-center text-center text-gray-500">
+              <FileText className="w-10 h-10 mb-4 opacity-20" />
+              <p className="text-sm">Select a form to manage enrollment</p>
             </div>
           ) : (
-            <div className="animate-in fade-in slide-in-from-right-4 duration-300 space-y-6">
+            <div className="space-y-6">
               {/* Actions Card */}
-              <div className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-200/50">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+              <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                   <div>
-                    <h2 className="text-xl font-bold text-gray-900">{selectedForm.formName}</h2>
-                    <p className="text-sm text-gray-500 mt-1">Upload a CSV/XLSX to set the master student list.</p>
+                    <h2 className="text-lg font-bold text-gray-900">{selectedForm.formName}</h2>
+                    <p className="text-sm text-gray-500">Manage master student list (CSV/XLSX)</p>
                   </div>
-                  <div className="flex items-center gap-3 w-full md:w-auto">
-                    <label className="flex-1 md:flex-none flex items-center justify-center px-6 py-3 bg-indigo-600 text-white rounded-xl text-sm font-bold hover:bg-indigo-700 transition-all shadow-lg shadow-indigo-100 cursor-pointer">
+                  <div className="flex items-center gap-2 w-full md:w-auto">
+                    <label className="flex-1 md:flex-none flex items-center justify-center px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors cursor-pointer">
                       <Upload className="w-4 h-4 mr-2" />
-                      {isUpdating ? 'Updating...' : 'Upload Member List'}
+                      {isUpdating ? 'Updating...' : 'Upload List'}
                       <input type="file" accept=".csv, .xlsx, .xls" className="hidden" onChange={handleFileUpload} disabled={isUpdating} />
                     </label>
                     <button 
                       onClick={clearEnrollment}
-                      className="p-3 text-rose-500 hover:bg-rose-50 rounded-xl transition-colors border border-rose-100"
+                      className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-gray-200"
                       title="Clear List"
                     >
-                      <Trash2 className="w-5 h-5" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
               </div>
 
               {/* Emails List Card */}
-              <div className="bg-white rounded-[2rem] border border-gray-100 shadow-xl shadow-gray-200/50 overflow-hidden">
-                <div className="p-6 border-b border-gray-50 bg-gray-50/30 flex flex-col md:flex-row justify-between items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
-                      <Users className="w-4 h-4" />
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div className="p-4 border-b border-gray-100 bg-gray-50 flex flex-col md:flex-row justify-between items-center gap-4">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-semibold text-gray-700">Enrolled List</span>
+                    <span className="bg-gray-200 text-gray-600 px-2 py-0.5 rounded text-[10px] font-bold">
+                      {selectedForm.enrolledEmails?.length || 0}
+                    </span>
+                    <div className="flex items-center text-green-700 text-xs font-medium">
+                      <CheckCircle className="w-3.5 h-3.5 mr-1" />
+                      Verified: {selectedForm.enrolledEmails?.filter(e => submittedEmails.has(e.toLowerCase())).length || 0}
                     </div>
-                    <span className="font-bold text-gray-900">Enrolled Master List</span>
-                    <span className="bg-gray-200 text-gray-600 px-2 py-0.5 rounded text-[10px] font-bold">{selectedForm.enrolledEmails?.length || 0}</span>
                   </div>
                   
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl border border-emerald-100">
-                      <CheckCircle className="w-3.5 h-3.5 mr-2" />
-                      <span className="text-xs font-bold whitespace-nowrap">
-                        Verified: {selectedForm.enrolledEmails?.filter(e => submittedEmails.has(e.toLowerCase())).length || 0} / {selectedForm.enrolledEmails?.length || 0}
-                      </span>
-                    </div>
+                  <div className="flex items-center gap-2">
                     <button
                       onClick={() => setShowVerifiedDetails(!showVerifiedDetails)}
-                      className="text-[10px] font-black uppercase tracking-widest px-3 py-1.5 bg-gray-900 text-white rounded-xl hover:bg-gray-800 transition-all shadow-lg shadow-gray-200 active:scale-95"
+                      className="text-xs font-semibold px-3 py-1.5 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                     >
-                      {showVerifiedDetails ? 'Hide Contact List' : 'View Contact List'}
+                      {showVerifiedDetails ? 'Show All' : 'Show Verified'}
                     </button>
-                  </div>
-                  <div className="relative w-full md:w-64">
-                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input 
-                      type="text" 
-                      placeholder="Search email..." 
-                      className="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-100 outline-none transition-all"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+                    <div className="relative">
+                      <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                      <input 
+                        type="text" 
+                        placeholder="Search..." 
+                        className="pl-9 pr-3 py-1.5 bg-white border border-gray-200 rounded-lg text-sm outline-none focus:border-gray-400 transition-colors w-40 md:w-48"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                      />
+                    </div>
                   </div>
                 </div>
 
                 {showVerifiedDetails ? (
-                  <div className="animate-in slide-in-from-top-4 duration-300">
-                    <div className="px-8 py-4 bg-emerald-50/50 border-y border-emerald-100 flex items-center justify-between">
-                      <span className="text-xs font-bold text-emerald-800 uppercase tracking-widest flex items-center">
-                        <Users className="w-3 h-3 mr-2" />
-                        Verified Contact Details
-                      </span>
-                    </div>
-                    <div className="max-h-[500px] overflow-y-auto">
-                      <table className="w-full text-left">
-                        <thead className="bg-gray-50/80 sticky top-0 z-10">
-                          <tr>
-                            <th className="px-8 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Name</th>
-                            <th className="px-8 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Email</th>
-                            <th className="px-8 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest">Phone</th>
-                          </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-50">
-                          {submittedData
-                            .filter(student => selectedForm.enrolledEmails?.some(e => e.toLowerCase() === student.email.toLowerCase()))
-                            .map((student, i) => (
-                              <tr key={i} className="hover:bg-emerald-50/30 transition-colors">
-                                <td className="px-8 py-4 text-sm font-bold text-gray-900">{student.name}</td>
-                                <td className="px-8 py-4 text-sm text-gray-600 font-mono">{student.email}</td>
-                                <td className="px-8 py-4 text-sm text-gray-600">{student.phone || 'N/A'}</td>
-                              </tr>
-                            ))}
-                          {submittedData.filter(student => selectedForm.enrolledEmails?.some(e => e.toLowerCase() === student.email.toLowerCase())).length === 0 && (
-                            <tr>
-                              <td colSpan="3" className="px-8 py-12 text-center text-gray-400 italic">No verified contacts found.</td>
+                  <div className="max-h-[500px] overflow-y-auto">
+                    <table className="w-full text-left">
+                      <thead className="bg-gray-50 sticky top-0 border-b border-gray-100">
+                        <tr>
+                          <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Name</th>
+                          <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</th>
+                          <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Phone</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {submittedData
+                          .filter(student => selectedForm.enrolledEmails?.some(e => e.toLowerCase() === student.email.toLowerCase()))
+                          .map((student, i) => (
+                            <tr key={i} className="hover:bg-gray-50 transition-colors">
+                              <td className="px-6 py-3 text-sm font-medium text-gray-900">{student.name}</td>
+                              <td className="px-6 py-3 text-sm text-gray-600">{student.email}</td>
+                              <td className="px-6 py-3 text-sm text-gray-600">{student.phone || '—'}</td>
                             </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
+                          ))}
+                        {submittedData.filter(student => selectedForm.enrolledEmails?.some(e => e.toLowerCase() === student.email.toLowerCase())).length === 0 && (
+                          <tr>
+                            <td colSpan="3" className="px-6 py-10 text-center text-gray-400 text-sm">No verified contacts yet.</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
                   </div>
                 ) : (
                   <div className="max-h-[500px] overflow-y-auto">
                     <table className="w-full text-left">
-                      <thead className="bg-gray-50 sticky top-0 z-10">
+                      <thead className="bg-gray-50 sticky top-0 border-b border-gray-100">
                         <tr>
-                          <th className="px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest">Student Email</th>
-                          <th className="px-8 py-4 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Action</th>
+                          <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">Student Email</th>
+                          <th className="px-6 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Status</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-50">
+                      <tbody className="divide-y divide-gray-100">
                         {filteredEmails.map((email, idx) => {
                           const hasSubmitted = submittedEmails.has(email.toLowerCase());
                           return (
                             <tr key={idx} className="hover:bg-gray-50 transition-colors">
-                              <td className="px-8 py-4 text-sm text-gray-600 font-mono flex items-center justify-between">
+                              <td className="px-6 py-3 text-sm text-gray-600 font-medium">
                                 {email}
-                                {hasSubmitted ? (
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-black bg-emerald-500 text-white shadow-sm">VERIFIED</span>
-                                ) : (
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-black bg-gray-100 text-gray-400 border border-gray-200">PENDING</span>
-                                )}
                               </td>
-                              <td className="px-8 py-4 text-right">
-                                <button className="text-gray-300 hover:text-rose-500 transition-colors">
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
+                              <td className="px-6 py-3 text-right">
+                                {hasSubmitted ? (
+                                  <span className="text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded border border-green-100">VERIFIED</span>
+                                ) : (
+                                  <span className="text-[10px] font-bold text-gray-400 bg-gray-50 px-2 py-0.5 rounded border border-gray-200">PENDING</span>
+                                )}
                               </td>
                             </tr>
                           );
                         })}
                         {filteredEmails.length === 0 && (
                           <tr>
-                            <td colSpan="2" className="px-8 py-12 text-center text-gray-400 italic">
-                              {searchTerm ? 'No matching emails found' : 'No students enrolled yet'}
+                            <td colSpan="2" className="px-6 py-10 text-center text-gray-400 text-sm">
+                              {searchTerm ? 'No results found' : 'No students enrolled'}
                             </td>
                           </tr>
                         )}
@@ -316,6 +297,7 @@ const AdminEnrollment = () => {
           )}
         </div>
       </div>
+
     </div>
   );
 };
