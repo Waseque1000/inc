@@ -148,9 +148,21 @@ const AdminLayout = () => {
       </nav>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 min-h-[calc(100vh-16rem)]">
         <Outlet />
       </main>
+
+      {/* Footer */}
+      <footer className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 border-t border-gray-100 mt-auto">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-xs font-medium text-gray-400 tracking-wider uppercase">
+            © {new Date().getFullYear()} Incubator System. All rights reserved.
+          </p>
+          <p className="text-sm font-semibold text-gray-900">
+            Created by <span className="text-indigo-600 font-black tracking-tighter">Wasee.</span>
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };

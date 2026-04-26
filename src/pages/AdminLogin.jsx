@@ -120,6 +120,16 @@ const AdminLogin = () => {
           Authorized personnel only
         </p>
       </div>
+
+      {/* Login Footer */}
+      <div className="absolute bottom-8 left-0 right-0 px-8 flex flex-col items-center gap-2">
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+          © {new Date().getFullYear()} Incubator System
+        </p>
+        <p className="text-xs font-semibold text-gray-900">
+          Created by <span className="text-indigo-600 font-black">Wasee.</span>
+        </p>
+      </div>
     </div>
   );
 };

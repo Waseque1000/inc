@@ -295,6 +295,16 @@ const StudentForm = () => {
           </div>
         </div>
       </div>
+
+      {/* Page Footer */}
+      <footer className="w-full max-w-4xl mt-8 px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-4 animate-in fade-in duration-1000 delay-700">
+        <p className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em]">
+          © {new Date().getFullYear()} Incubator. All rights reserved.
+        </p>
+        <p className="text-sm font-semibold text-gray-900">
+          Created by <span className="text-indigo-600 font-black tracking-tighter uppercase">Wasee.</span>
+        </p>
+      </footer>
     </div>
   );
 };
