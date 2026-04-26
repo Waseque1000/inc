@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { UserPlus, Shield, Mail, Calendar, Trash2, X, Plus, User } from 'lucide-react';
+import Loader from '../components/Loader';
 
 const AdminManagement = () => {
   const [admins, setAdmins] = useState([]);
@@ -126,9 +127,7 @@ const AdminManagement = () => {
       {/* Admins Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
-          [1, 2, 3].map(i => (
-            <div key={i} className="h-48 bg-white rounded-xl border border-gray-200 animate-pulse"></div>
-          ))
+          <Loader fullPage={false} />
         ) : (
           admins.map(admin => (
             <div key={admin._id} className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:border-gray-300 transition-all">

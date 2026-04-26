@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import { Upload, FileText, CheckCircle, XCircle, Users, Search, Trash2, ArrowRight, Box } from 'lucide-react';
+import Loader from '../components/Loader';
 
 const AdminEnrollment = () => {
   const [forms, setForms] = useState([]);
@@ -117,10 +118,11 @@ const AdminEnrollment = () => {
     email.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
-  if (loading) return <div className="flex justify-center p-10">Loading...</div>;
+  if (loading) return <Loader />;
 
   return (
     <div className="space-y-8">
+      {isUpdating && <Loader />}
       <div>
         <h1 className="text-2xl font-bold text-gray-900">Member List Management</h1>
         <p className="text-gray-500">Manage the master enrollment list for your forms</p>

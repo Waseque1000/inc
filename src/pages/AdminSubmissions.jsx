@@ -8,6 +8,7 @@ import { ArrowLeft, Download, Edit2, Check, X, Eye, EyeOff, Copy, BarChart3, Use
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, PieChart, Pie } from 'recharts';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
+import Loader from '../components/Loader';
 
 
 // Submission Management Component
@@ -209,11 +210,7 @@ const AdminSubmissions = () => {
     }
   };
 
-  if (loading) return (
-    <div className="flex justify-center items-center h-64">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-    </div>
-  );
+  if (loading) return <Loader />;
 
   // Extract unique dates for table columns
   // Dynamic date range calculation
@@ -271,6 +268,7 @@ const AdminSubmissions = () => {
 
   return (
     <div className="space-y-6">
+      {isCheckingEnrollment && <Loader />}
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>

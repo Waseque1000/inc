@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { Copy, Plus, X, Calendar, Link as LinkIcon, Box, Edit2, Trash2, FileText } from 'lucide-react';
+import Loader from '../components/Loader';
 
 const AdminForms = () => {
   const [forms, setForms] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editFormId, setEditFormId] = useState(null);
@@ -37,10 +39,13 @@ const AdminForms = () => {
 
   const fetchForms = async () => {
     try {
+      setLoading(true);
       const res = await api.get('/forms');
       setForms(res.data);
     } catch (err) {
       toast.error('Failed to load forms');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -291,6 +296,8 @@ const AdminForms = () => {
       </div>
     </div>
   );
+
+  if (loading) return <Loader />;
 
   return (
     <div className="space-y-8">

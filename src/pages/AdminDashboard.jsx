@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../api/axios';
 import { Box, Users, Gift, ChevronRight, BarChart3, Clock } from 'lucide-react';
+import Loader from '../components/Loader';
 
 const AdminDashboard = () => {
   const [forms, setForms] = useState([]);
@@ -22,11 +23,7 @@ const AdminDashboard = () => {
     }
   };
 
-  if (loading) return (
-    <div className="flex justify-center items-center h-64">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-    </div>
-  );
+  if (loading) return <Loader />;
 
   return (
     <div className="space-y-8">

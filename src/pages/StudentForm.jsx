@@ -4,6 +4,7 @@ import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { CheckCircle2, Mail, Send, Globe, MessageCircle, Share2 } from 'lucide-react';
 import illustration from '../assets/illustration.png';
+import Loader from '../components/Loader';
 
 const StudentForm = () => {
   const { slug } = useParams();
@@ -61,11 +62,7 @@ const StudentForm = () => {
     }
   };
 
-  if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-    </div>
-  );
+  if (loading) return <Loader />;
 
   if (error) return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#0a0a0b] text-white p-8 relative overflow-hidden font-sans">

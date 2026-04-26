@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import api from '../api/axios';
 import toast from 'react-hot-toast';
 import { Trophy, CheckCircle, XCircle, Eye, EyeOff, Copy } from 'lucide-react';
+import Loader from '../components/Loader';
 
 const AdminRewards = () => {
   const { formId } = useParams();
@@ -39,11 +40,7 @@ const AdminRewards = () => {
 
   const eligibleStudents = rewards.filter(s => s.isEligible);
 
-  if (loading) return (
-    <div className="flex justify-center items-center h-64">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-    </div>
-  );
+  if (loading) return <Loader />;
 
   return (
     <div className="space-y-6">
