@@ -23,6 +23,7 @@ const AdminSubmissions = () => {
   // Inline edit state
   const [editContext, setEditContext] = useState({ id: null, field: null, customKey: null });
   const [editValue, setEditValue] = useState('');
+  const [pdfDays, setPdfDays] = useState('all');
 
   const [expandedStudentId, setExpandedStudentId] = useState(null);
   const [formSlug, setFormSlug] = useState('');
@@ -132,12 +133,25 @@ const AdminSubmissions = () => {
   };
 
   const handleExportPDF = () => {
-    const doc = new jsPDF();
-    doc.text('Student Daily Task Report', 14, 15);
-    
-    // Use the same dynamic date range as the table
-    const pdfDates = sortedDates;
+    // If we have many dates, use landscape orientation
+    let pdfDates = sortedDates;
+    if (pdfDays !== 'all') {
+      const days = parseInt(pdfDays);
+      pdfDates = sortedDates.slice(-days);
+    }
 
+    const doc = new jsPDF({
+      orientation: pdfDates.length > 5 ? 'landscape' : 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
+
+    doc.setFontSize(16);
+    doc.text('Student Daily Task Report', 14, 15);
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()} | Range: ${pdfDays === 'all' ? 'All Data' : `Last ${pdfDays} Days`}`, 14, 22);
+    
     const head = [['Name', ...pdfDates, 'Assigned Next']];
     const body = data.map(student => {
       const row = [student.name];
@@ -160,12 +174,14 @@ const AdminSubmissions = () => {
     autoTable(doc, {
       head: head,
       body: body,
-      startY: 20,
-      styles: { fontSize: 8, cellPadding: 2 },
-      columnStyles: { 0: { fontStyle: 'bold' } }
+      startY: 28,
+      styles: { fontSize: pdfDates.length > 10 ? 6 : 8, cellPadding: 2 },
+      columnStyles: { 0: { fontStyle: 'bold', cellWidth: 'auto' } },
+      headStyles: { fillColor: [79, 70, 229] }, // Indigo-600
+      alternateRowStyles: { fillColor: [249, 250, 251] }
     });
 
-    doc.save(`report-${formId}.pdf`);
+    doc.save(`report-${formId}-${pdfDays}-days.pdf`);
   };
 
   const resolveGuideline = async (submissionId) => {
@@ -312,13 +328,28 @@ const AdminSubmissions = () => {
             <LinkIcon className="w-4 h-4 mr-2" />
             Share Form
           </button>
-          <button
-            onClick={handleExportPDF}
-            className="flex items-center bg-white border border-gray-200 text-gray-900 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors shadow-sm"
-          >
-            <Download className="w-4 h-4 mr-2" />
-            Export PDF
-          </button>
+          <div className="flex items-center bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+            <select 
+              value={pdfDays} 
+              onChange={(e) => setPdfDays(e.target.value)}
+              className="pl-3 pr-8 py-2 text-sm font-medium text-gray-700 bg-transparent border-none focus:ring-0 cursor-pointer appearance-none"
+              style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0 0 24 24\' stroke=\'%236b7280\'%3E%3Cpath stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'2\' d=\'M19 9l-7 7-7-7\'%3E%3C/path%3E%3C/svg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5rem center', backgroundSize: '1.25rem' }}
+            >
+              <option value="all">All Days</option>
+              <option value="3">Last 3 Days</option>
+              <option value="7">Last 7 Days</option>
+              <option value="15">Last 15 Days</option>
+              <option value="30">Last 30 Days</option>
+            </select>
+            <div className="w-px h-6 bg-gray-200"></div>
+            <button
+              onClick={handleExportPDF}
+              className="flex items-center text-gray-900 px-4 py-2 text-sm font-medium hover:bg-gray-50 transition-colors"
+            >
+              <Download className="w-4 h-4 mr-2 text-indigo-600" />
+              Export PDF
+            </button>
+          </div>
         </div>
       </div>
 
